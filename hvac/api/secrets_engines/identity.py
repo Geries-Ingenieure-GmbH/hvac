@@ -1787,3 +1787,25 @@ class Identity(VaultApiBase):
             url=api_path,
             json=params,
         )
+
+    def read_client_by_name(self, name, mount_point=DEFAULT_MOUNT_POINT):
+        """Query a client by name.
+
+        Supported methods:
+            GET: {mount_point}/oidc/client/:name.
+
+        :param name: Name of the client.
+        :type name: str | unicode
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return:  The response of the read_client_by_name request.
+        :rtype: dict
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/oidc/client/{name}",
+            mount_point=mount_point,
+            name=name,
+        )
+        return self._adapter.get(
+            url=api_path,
+        )

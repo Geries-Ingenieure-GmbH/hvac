@@ -2232,3 +2232,109 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
             member="keys",
             container=response,
         )
+
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_scope",
+                template="",
+                description="hvac scope",
+            ),
+        ]
+    )
+    def test_create_or_update_scope(self, label, name, template, description):
+        response = self.client.secrets.identity.create_or_update_scope(
+            name=name,
+            template=template,
+            description=description,
+        )
+        logging.debug("create_or_update_scope response: %s" % response)
+        self.assertEqual(
+            first=204,
+            second=response.status_code,
+        )
+
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac",
+                issuer=None,
+                allowed_client_ids=[],
+                scopes_supported=[],
+            ),
+        ]
+    )
+    def test_create_or_update_provider(self, label, name, issuer, allowed_client_ids, scopes_supported):
+        response = self.client.secrets.identity.create_or_update_provider(
+            name=name,
+            issuer=issuer,
+            allowed_client_ids=allowed_client_ids,
+            scopes_supported=scopes_supported,
+        )
+        logging.debug("create_or_update_provider response: %s" % response)
+        self.assertEqual(
+            first=204,
+            second=response.status_code,
+        )
+    
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_client",
+                key="default",
+                redirect_uris=None,
+                assigments=None,
+                client_type="confidential",
+                id_token_ttl="24h",
+                access_token_ttl="24h",
+            ),
+        ]
+    )
+    def test_create_or_update_client(self, label, name, key, redirect_uris, assigments, client_type, id_token_ttl, access_token_ttl):
+        response = self.client.secrets.identity.create_or_update_client(
+            name=name,
+            key=key,
+            redirect_uris=redirect_uris,
+            assigments=assigments,
+            client_type=client_type,
+            id_token_ttl=id_token_ttl,
+            access_token_ttl=access_token_ttl,
+        )
+        logging.debug("create_or_update_client response: %s" % response)
+        self.assertEqual(
+            first=204,
+            second=response.status_code,
+        )
+
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_client",
+            ),
+        ]
+    )
+    def test_read_client_by_name(self, label, name):
+        create_or_update_client_response = (
+            self.client.secrets.identity.create_or_update_client(
+                name=name,
+            )
+        )
+        logging.debug(
+            "create_or_update_client response: %s" % create_or_update_client_response
+        )
+        response = self.client.secrets.identity.read_client_by_name(
+            name=name,
+        )
+        logging.debug("read_client_by_name response: %s" % response)
+        self.assertEqual(
+            first="confidential",
+            second=response["data"]["client_type"],
+        )
+        self.assertEqual(
+            first="default",
+            second=response["data"]["key"],
+        )
