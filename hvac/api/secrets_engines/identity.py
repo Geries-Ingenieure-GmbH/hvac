@@ -1659,7 +1659,8 @@ class Identity(VaultApiBase):
         :param name: Name of the provider.
         :type name: str | unicode
         :param issuer: Specifies what will be used as the scheme://host:port component for the iss claim of ID tokens.
-            This defaults to a URL with Vault's api_addr as the scheme://host:port component and /v1/:namespace/identity/oidc/provider/:name as the path component.
+            This defaults to a URL with Vault's api_addr as the scheme://host:port component
+            and /v1/:namespace/identity/oidc/provider/:name as the path component.
             If provided explicitly, it must point to a Vault instance that is network reachable by clients for ID token validation.
         :type issuer: str | unicode
         :param allowed_client_ids: The client IDs that are permitted to use the provider.
@@ -1725,6 +1726,26 @@ class Identity(VaultApiBase):
         return self._adapter.post(
             url=api_path,
             json=params,
+        )
+
+    def list_scopes(self, mount_point=DEFAULT_MOUNT_POINT):
+        """
+        This endpoint will list all configured scopes.
+
+        Supported methods:
+            LIST: {mount_point}/identity/oidc/scope.
+
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the list_scopes request.
+        :rtype: dict
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/oidc/scope",
+            mount_point=mount_point,
+        )
+        return self._adapter.list(
+            url=api_path,
         )
 
     def create_or_update_client(
@@ -1807,5 +1828,25 @@ class Identity(VaultApiBase):
             name=name,
         )
         return self._adapter.get(
+            url=api_path,
+        )
+
+    def list_clients(self, mount_point=DEFAULT_MOUNT_POINT):
+        """
+        This endpoint will list all configured clients.
+
+        Supported methods:
+            LIST: {mount_point}/identity/oidc/client.
+
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the list_clients request.
+        :rtype: dict
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/oidc/client",
+            mount_point=mount_point,
+        )
+        return self._adapter.list(
             url=api_path,
         )

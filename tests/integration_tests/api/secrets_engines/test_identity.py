@@ -2259,6 +2259,34 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
         [
             param(
                 "success",
+                name="hvac_scope",
+                template="",
+                description="hvac scope",
+            ),
+        ]
+    )
+    def test_list_scopes(self, label, name, template, description):
+        create_or_update_scope_response = (
+            self.client.secrets.identity.create_or_update_scope(
+                name=name,
+                template=template,
+                description=description,
+            )
+        )
+        logging.debug(
+            "create_or_update_scope response: %s" % create_or_update_scope_response
+        )
+        response = self.client.secrets.identity.list_scopes()
+        logging.debug("list_scopes response: %s" % response)
+        self.assertIn(
+            member=name,
+            container=response["data"]["keys"],
+        )
+
+    @parameterized.expand(
+        [
+            param(
+                "success",
                 name="hvac",
                 issuer=None,
                 allowed_client_ids=[],
@@ -2337,4 +2365,29 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
         self.assertEqual(
             first="default",
             second=response["data"]["key"],
+        )
+
+    # Test for def list_clients(self, mount_point=DEFAULT_MOUNT_POINT)
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_client",
+            ),
+        ]
+    )
+    def test_list_clients(self, label, name):
+        create_or_update_client_response = (
+            self.client.secrets.identity.create_or_update_client(
+                name=name,
+            )
+        )
+        logging.debug(
+            "create_or_update_client response: %s" % create_or_update_client_response
+        )
+        response = self.client.secrets.identity.list_clients()
+        logging.debug("list_clients response: %s" % response)
+        self.assertIn(
+            member=name,
+            container=response["data"]["keys"],
         )
