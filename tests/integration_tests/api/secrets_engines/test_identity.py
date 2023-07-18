@@ -2287,7 +2287,7 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
         [
             param(
                 "success",
-                name="hvac",
+                name="hvac_provider",
                 issuer=None,
                 allowed_client_ids=[],
                 scopes_supported=[],
@@ -2306,7 +2306,60 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
             first=204,
             second=response.status_code,
         )
+
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_provider_1",
+            ),
+        ]
+    )
+    def test_list_providers(self, label, name):
+        create_or_update_provider_response = (
+            self.client.secrets.identity.create_or_update_provider(
+                name=name,
+            )
+        )
+        logging.debug(
+            "create_or_update_provider response: %s" % create_or_update_provider_response
+        )
+        response = self.client.secrets.identity.list_providers()
+        logging.debug("list_providers response: %s" % response)
+        self.assertIn(
+            member=name,
+            container=response["data"]["keys"],
+        )
     
+    # Test for def read_provider_by_name(self, name, mount_point=DEFAULT_MOUNT_POINT):
+    @parameterized.expand(
+        [
+            param(
+                "success",
+                name="hvac_provider_2",
+                allowed_client_ids=["*"],
+            ),
+        ]
+    )
+    def test_read_provider_by_name(self, label, name, allowed_client_ids):
+        create_or_update_provider_response = (
+            self.client.secrets.identity.create_or_update_provider(
+                name=name,
+                allowed_client_ids=allowed_client_ids,
+            )
+        )
+        logging.debug(
+            "create_or_update_provider response: %s" % create_or_update_provider_response
+        )
+        response = self.client.secrets.identity.read_provider_by_name(
+            name=name,
+        )
+        logging.debug("read_provider_by_name response: %s" % response)
+        self.assertEqual(
+            first=allowed_client_ids,
+            second=response["data"]["allowed_client_ids"],
+        )
+
     @parameterized.expand(
         [
             param(
@@ -2341,11 +2394,13 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
         [
             param(
                 "success",
-                name="hvac_client",
+                name="hvac_client_2",
+                client_type="confidential",
+                key="default",
             ),
         ]
     )
-    def test_read_client_by_name(self, label, name):
+    def test_read_client_by_name(self, label, name, client_type, key):
         create_or_update_client_response = (
             self.client.secrets.identity.create_or_update_client(
                 name=name,
@@ -2359,11 +2414,11 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
         )
         logging.debug("read_client_by_name response: %s" % response)
         self.assertEqual(
-            first="confidential",
+            first=client_type,
             second=response["data"]["client_type"],
         )
         self.assertEqual(
-            first="default",
+            first=key,
             second=response["data"]["key"],
         )
 

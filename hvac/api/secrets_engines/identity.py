@@ -1692,6 +1692,47 @@ class Identity(VaultApiBase):
             json=params,
         )
 
+    def list_providers(self, mount_point=DEFAULT_MOUNT_POINT):
+        """List all configured OIDC providers.
+        
+        Supported methods:
+            LIST: {mount_point}/oidc/provider.
+
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the list_scopes request.
+        :rtype: dict
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/oidc/provider",
+            mount_point=mount_point,
+        )
+        return self._adapter.list(
+            url=api_path,
+        )
+
+    def read_provider_by_name(self, name, mount_point=DEFAULT_MOUNT_POINT):
+        """This endpoint queries the OIDC provider by its name.
+
+        Supported methods:
+            GET: {mount_point}/oidc/provider/:name.
+        
+        :param name: Name of the provider.
+        :type name: str | unicode
+        :param mount_point: The "path" the method/backend was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the read_provider_by_name request.
+        :rtype: dict
+        """
+        api_path = utils.format_url(
+            "/v1/{mount_point}/oidc/provider/{name}",
+            mount_point=mount_point,
+            name=name,
+        )
+        return self._adapter.get(
+            url=api_path,
+        )
+
     def create_or_update_scope(
         self, name, template=None, description=None, mount_point=DEFAULT_MOUNT_POINT
     ):
