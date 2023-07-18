@@ -2314,19 +2314,19 @@ class TestIdentity(HvacIntegrationTestCase, TestCase):
                 name="hvac_client",
                 key="default",
                 redirect_uris=None,
-                assigments=None,
+                assignments=None,
                 client_type="confidential",
                 id_token_ttl="24h",
                 access_token_ttl="24h",
             ),
         ]
     )
-    def test_create_or_update_client(self, label, name, key, redirect_uris, assigments, client_type, id_token_ttl, access_token_ttl):
+    def test_create_or_update_client(self, label, name, key, redirect_uris, assignments, client_type, id_token_ttl, access_token_ttl):
         response = self.client.secrets.identity.create_or_update_client(
             name=name,
             key=key,
             redirect_uris=redirect_uris,
-            assigments=assigments,
+            assignments=assignments,
             client_type=client_type,
             id_token_ttl=id_token_ttl,
             access_token_ttl=access_token_ttl,

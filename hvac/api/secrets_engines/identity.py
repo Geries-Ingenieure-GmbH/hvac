@@ -1753,7 +1753,7 @@ class Identity(VaultApiBase):
         name,
         key="default",
         redirect_uris=None,
-        assigments=None,
+        assignments=None,
         client_type="confidential",
         id_token_ttl="24h",
         access_token_ttl="24h",
@@ -1793,7 +1793,7 @@ class Identity(VaultApiBase):
             {
                 "key": key,
                 "redirect_uris": redirect_uris,
-                "assigments": assigments,
+                "assignments": assignments,
                 "client_type": client_type,
                 "id_token_ttl": id_token_ttl,
                 "access_token_ttl": access_token_ttl,
